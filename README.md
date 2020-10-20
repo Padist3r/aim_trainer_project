@@ -1,4 +1,4 @@
-#Aim Trainer Project
+# Aim Trainer Project
 
 This is a simple aim training program that will let the user hit targets
 and will give various stats on their accuaracy and speed etc.
