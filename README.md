@@ -6,3 +6,7 @@ and will give various stats on their accuaracy and speed etc.
 This is a short project for me while I learn python.
 
 I'm also using this to become more familiar with GIT and GITHUB.
+
+Images sourced from:
+- [*Pixabay*](https://pixabay.com/)
+- [*Flaticon*](https://www.flaticon.com/)
