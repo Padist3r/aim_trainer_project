@@ -22,8 +22,9 @@ player_sights = pygame.image.load("Images\\sight.png")  # 24px
 
 # Target
 load_target = pygame.image.load("Images\\bullseye.png")     # 128px
-target_x = 500
-target_y = 500
+target_on = True
+target_x = random.randint(65, 1220)
+target_y = random.randint(65, 670)
 
 # Hides the OS mouse
 pygame.mouse.set_visible(False)
@@ -38,7 +39,9 @@ def player(x, y):
 
 def draw_target(x, y):
     """Draws the targets"""
-    screen.blit(load_target, (x - 64, y - 64))
+    global target_on
+    if target_on:
+        screen.blit(load_target, (x - 64, y - 64))
 
 
 def is_collision(px, py, tx, ty):
@@ -67,11 +70,13 @@ while running:
     # What gets drawn on the screen (order matters)
     screen.fill(white)
 
-    # This checks to see if you have clicked on the target
-    # I still need to figure out how to fully remove target and redraw a new one
+    # This checks to see if you have clicked on the target and moves it position
     if is_collision(mouse_x, mouse_y, target_x, target_y) and mouse_click:
-        pass
+        target_on = False
+        target_x = random.randint(65, 1220)
+        target_y = random.randint(65, 670)
     else:
+        target_on = True
         draw_target(target_x, target_y)
 
     player(mouse_x, mouse_y)
