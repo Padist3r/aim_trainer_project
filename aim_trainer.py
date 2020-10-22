@@ -44,6 +44,7 @@ def draw_target(x, y):
         screen.blit(load_target, (x - 64, y - 64))
 
 
+# put the mouse click in this function
 def is_collision(px, py, tx, ty):
     distance = math.sqrt(((tx - px) ** 2) + ((ty - py) ** 2))
     if distance < 65:
