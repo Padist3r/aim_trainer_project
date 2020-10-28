@@ -28,16 +28,21 @@ def collision(x, y, w, h, mx, my):
 def start_screen():
     global game_state
     # Text
+    main_pos_x = res_x // 2
+    main_pos_y = res_y // 3
+    start_pos_y = res_y // 1.5
+    # Main Title Text
     main_text = main_font.render("Aim Training Program", True, white, red)
-    start_text = main_font.render("START", True, red)
     text_rect = main_text.get_rect()
+    text_rect.center = (main_pos_x, main_pos_y)
+    # Start Button
+    start_text = main_font.render("START", True, red)
     start_rect = start_text.get_rect()
-    text_rect.center = (res_x // 2, res_y // 3)
-    start_rect.center = (res_x // 2, res_y // 1.5)
+    start_rect.center = (main_pos_x, start_pos_y)
 
     if game_state == "start":
         screen.fill(white)
-        if collision(res_x // 2, res_y // 3, 700, 64, mouse_x, mouse_y):
+        if collision(main_pos_x, main_pos_y, 700, 64, mouse_x, mouse_y):
             main_text = main_font.render("Aim Training Program", True,
                                          red, white)
             screen.blit(main_text, text_rect)
@@ -46,11 +51,11 @@ def start_screen():
                                          white, red)
             screen.blit(main_text, text_rect)
 
-        if collision(res_x // 2, res_y // 1.5, 180, 64, mouse_x, mouse_y):
-            start_text = main_font.render("START", True, blue)
+        if collision(main_pos_x, start_pos_y, 180, 64, mouse_x, mouse_y):
+            start_text = main_font.render("START", True, gray)
             screen.blit(start_text, start_rect)
         else:
-            start_text = main_font.render("START", True, red)
+            start_text = main_font.render("START", True, black)
             screen.blit(start_text, start_rect)
 
         if collision(res_x // 2, res_y // 1.5, 180, 64, mouse_x, mouse_y)\
@@ -77,6 +82,7 @@ if __name__ == '__main__':
     # Colours to use
     black = (0, 0, 0)
     white = (255, 255, 255)
+    gray = (100, 100, 100)
     red = (255, 0, 0)
     blue = (0, 0, 255)
 
