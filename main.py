@@ -1,5 +1,6 @@
 import pygame
-from Buttons import Target
+import time
+from Buttons import Target, Text
 
 
 def draw_player(x, y):
@@ -32,31 +33,27 @@ def start_screen():
     main_pos_y = res_y // 3
     start_pos_y = res_y // 1.5
     # Main Title Text
-    main_text = main_font.render("Aim Training Program", True, white, red)
-    text_rect = main_text.get_rect()
-    text_rect.center = (main_pos_x, main_pos_y)
+    main_text = Text(screen, "Aim Training Program", main_font,
+                     main_pos_x, main_pos_y, white, red)
+    main_text2 = Text(screen, "Aim Training Program", main_font,
+                      main_pos_x, main_pos_y, red, white)
     # Start Button
-    start_text = main_font.render("START", True, red)
-    start_rect = start_text.get_rect()
-    start_rect.center = (main_pos_x, start_pos_y)
+    start_text = Text(screen, "START", main_font, main_pos_x, start_pos_y,
+                      black)
+    start_text2 = Text(screen, "START", main_font, main_pos_x, start_pos_y,
+                       gray)
 
     if game_state == "start":
         screen.fill(white)
         if collision(main_pos_x, main_pos_y, 700, 64, mouse_x, mouse_y):
-            main_text = main_font.render("Aim Training Program", True,
-                                         red, white)
-            screen.blit(main_text, text_rect)
+            main_text2.display_text()
         else:
-            main_text = main_font.render("Aim Training Program", True,
-                                         white, red)
-            screen.blit(main_text, text_rect)
+            main_text.display_text()
 
         if collision(main_pos_x, start_pos_y, 180, 64, mouse_x, mouse_y):
-            start_text = main_font.render("START", True, gray)
-            screen.blit(start_text, start_rect)
+            start_text2.display_text()
         else:
-            start_text = main_font.render("START", True, black)
-            screen.blit(start_text, start_rect)
+            start_text.display_text()
 
         if collision(res_x // 2, res_y // 1.5, 180, 64, mouse_x, mouse_y)\
                 and mouse_click:
@@ -66,30 +63,32 @@ def start_screen():
 
 
 def play_screen():
+    global game_state
     global score
-    global misses
-    # Score text positions
-    score_pos_x = 100
-    score_pos_y = 30
-    miss_pos_x = 118
-    miss_pos_y = 60
+    global timer
     # Score text
-    score_text = score_font.render(f"Score: {str(score)}", True, black)
-    score_rect = score_text.get_rect()
-    score_rect.center = (score_pos_x, score_pos_y)
-    miss_text = score_font.render(f"Misses: {str(misses)}", True, black)
-    miss_rect = miss_text.get_rect()
-    miss_rect.center = (miss_pos_x, miss_pos_y)
+    score_text = Text(screen, f"Score: {str(score)}", score_font,
+                      100, 30, black)
+    miss_text = Text(screen, f"Misses: {str(misses)}", score_font,
+                     91, 60, black)
+    # Time remaining text
+    time_text = Text(screen, f"Remaining Time: {str(timer)}", score_font,
+                     1100, 30, black)
 
     if game_state == "play":
         # What gets drawn on the screen (order matters)
 
         screen.fill(white)
-        screen.blit(score_text, score_rect)
-        screen.blit(miss_text, miss_rect)
-        t1.draw_target()
-        t2.draw_target()
+        score_text.display_text()
+        miss_text.display_text()
+        time_text.display_text()
+        t1.draw_target(mouse_click, 2)
+        t2.draw_target(mouse_click, 2)
         draw_player(mouse_x, mouse_y)
+
+        if timer == -1:
+            timer = reset_time
+            game_state = "start"
 
 
 if __name__ == '__main__':
@@ -113,6 +112,13 @@ if __name__ == '__main__':
     res_y = 720
     screen = pygame.display.set_mode((res_x, res_y))
 
+    # Clock and Time
+    Clock = pygame.time.Clock()
+    CLOCK_TICK = pygame.USEREVENT + 1
+    pygame.time.set_timer(CLOCK_TICK, 1000)
+    reset_time = 11
+    timer = reset_time
+
     # Title and Icon
     pygame.display.set_caption("Aim Trainer")
     icon = pygame.image.load("Images\\aim.png")
@@ -123,12 +129,10 @@ if __name__ == '__main__':
 
     # Mouse Controls
     pygame.mouse.set_visible(False)
-    mouse_click = False
 
     # Game State and Levels
-    game_state = "play"
+    game_state = "start"
     level = 1
-    misses = 0
 
     # Create targets
     t1 = Target("t1", screen, "Images\\bullseye.png")
@@ -137,9 +141,11 @@ if __name__ == '__main__':
     # Game loop
     running = True
     while running:
+        mouse_click = False
+        # Counts the hits and misses
         score = t1.hit_counter + t2.hit_counter
-        if t1.miss_counter and t2.miss_counter:
-            misses += 1
+        misses = int(round(t1.miss_counter + t2.miss_counter))
+
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         # Checks for player inputs and button presses
@@ -148,10 +154,22 @@ if __name__ == '__main__':
                 running = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 game_state = "start"
+            if event.type == pygame.MOUSEBUTTONDOWN and event.button == 1:
+                mouse_click = True
+                continue
+            else:
+                mouse_click = False
+            if event.type == CLOCK_TICK and game_state == "play":
+                timer -= 1
+                print(timer)
+
         if game_state == "start":
             start_screen()
-        elif game_state == "play":
+        if game_state == "play":
             play_screen()
+
         pygame.display.update()
+
+        Clock.tick(60)
 
     pygame.quit()
