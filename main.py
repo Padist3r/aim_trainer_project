@@ -1,5 +1,5 @@
 import pygame
-from Target_Class import Target
+from Buttons import Target
 
 
 def draw_player(x, y):
@@ -27,7 +27,7 @@ def collision(x, y, w, h, mx, my):
 
 def start_screen():
     global game_state
-    # Text
+    # Text Positions
     main_pos_x = res_x // 2
     main_pos_y = res_y // 3
     start_pos_y = res_y // 1.5
@@ -66,11 +66,29 @@ def start_screen():
 
 
 def play_screen():
+    global score
+    global misses
+    # Score text positions
+    score_pos_x = 100
+    score_pos_y = 30
+    miss_pos_x = 118
+    miss_pos_y = 60
+    # Score text
+    score_text = score_font.render(f"Score: {str(score)}", True, black)
+    score_rect = score_text.get_rect()
+    score_rect.center = (score_pos_x, score_pos_y)
+    miss_text = score_font.render(f"Misses: {str(misses)}", True, black)
+    miss_rect = miss_text.get_rect()
+    miss_rect.center = (miss_pos_x, miss_pos_y)
+
     if game_state == "play":
         # What gets drawn on the screen (order matters)
+
         screen.fill(white)
-        t1.draw_target(mouse_click)
-        t2.draw_target(mouse_click)
+        screen.blit(score_text, score_rect)
+        screen.blit(miss_text, miss_rect)
+        t1.draw_target()
+        t2.draw_target()
         draw_player(mouse_x, mouse_y)
 
 
@@ -88,6 +106,7 @@ if __name__ == '__main__':
 
     # Fonts
     main_font = pygame.font.SysFont("Consolas", 64)
+    score_font = pygame.font.SysFont("Consolas", 32)
 
     # Create the screen
     res_x = 1280
@@ -107,8 +126,9 @@ if __name__ == '__main__':
     mouse_click = False
 
     # Game State and Levels
-    game_state = "start"
+    game_state = "play"
     level = 1
+    misses = 0
 
     # Create targets
     t1 = Target("t1", screen, "Images\\bullseye.png")
@@ -117,25 +137,21 @@ if __name__ == '__main__':
     # Game loop
     running = True
     while running:
-
+        score = t1.hit_counter + t2.hit_counter
+        if t1.miss_counter and t2.miss_counter:
+            misses += 1
         mouse_x, mouse_y = pygame.mouse.get_pos()
 
         # Checks for player inputs and button presses
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                # If the left mouse button is clicked
-                if event.button == 1:
-                    mouse_click = True
-            if event.type == pygame.MOUSEBUTTONUP:
-                mouse_click = False
             if event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE:
                 game_state = "start"
-
-        start_screen()
-        play_screen()
-
+        if game_state == "start":
+            start_screen()
+        elif game_state == "play":
+            play_screen()
         pygame.display.update()
 
     pygame.quit()
