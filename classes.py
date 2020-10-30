@@ -53,17 +53,43 @@ class Text:
     that will be rendered to the screen
     """
 
-    def __init__(self, screen, text, font, x, y, colour, bg_colour=None):
+    def __init__(self, screen, text, font, x, y, colour,
+                 colour_change=None, bg_colour=None):
         self.screen = screen
         self.text = text
         self.font = font
         self.x = x
         self.y = y
         self.colour = colour
+        self.colour_change = colour_change
         self.bg_colour = bg_colour
 
     def display_text(self):
-        text = self.font.render(self.text, True, self.colour, self.bg_colour)
-        text_rect = text.get_rect()
-        text_rect.center = (self.x, self.y)
-        self.screen.blit(text, text_rect)
+        if self.colour_change is None:
+            text = self.font.render(self.text, True, self.colour,
+                                    self.bg_colour)
+            text_rect = text.get_rect()
+            text_rect.center = (self.x, self.y)
+            self.screen.blit(text, text_rect)
+        else:
+            if Text.mouse_over(self):
+                text = self.font.render(self.text, True, self.colour_change,
+                                        self.bg_colour)
+                text_rect = text.get_rect()
+                text_rect.center = (self.x, self.y)
+                self.screen.blit(text, text_rect)
+            else:
+                text = self.font.render(self.text, True, self.colour,
+                                        self.bg_colour)
+                text_rect = text.get_rect()
+                text_rect.center = (self.x, self.y)
+                self.screen.blit(text, text_rect)
+
+    def mouse_over(self):
+        mx, my = pygame.mouse.get_pos()
+        distance = \
+            math.sqrt(((self.x - mx) ** 2) + ((self.y - my) ** 2))
+        if distance < 65:
+            return True
+        else:
+            return False

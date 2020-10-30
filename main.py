@@ -1,6 +1,6 @@
 import pygame
 import time
-from Buttons import Target, Text
+from classes import Target, Text
 
 
 def draw_player(x, y):
@@ -9,60 +9,24 @@ def draw_player(x, y):
     screen.blit(player_sights, (x - 12, y - 12))
 
 
-def collision(x, y, w, h, mx, my):
-    """
-    Checks to see if the mouse is hovering over an object.
-    :param x: pos x of object
-    :param y: pos y of object
-    :param w: width of object
-    :param h: height of object
-    :param mx: mouse pos x
-    :param my: mouse pos y
-    """
-    if (x - w // 2) <= mx <= (x + w // 2) and (y - h // 2) <= my <=\
-            (y + h // 2):
-        return True
-    else:
-        return False
-
-
 def start_screen():
+
     global game_state
-    # Text Positions
-    main_pos_x = res_x // 2
-    main_pos_y = res_y // 3
-    start_pos_y = res_y // 1.5
-    # Main Title Text
-    main_text = Text(screen, "Aim Training Program", main_font,
-                     main_pos_x, main_pos_y, white, red)
-    main_text2 = Text(screen, "Aim Training Program", main_font,
-                      main_pos_x, main_pos_y, red, white)
-    # Start Button
-    start_text = Text(screen, "START", main_font, main_pos_x, start_pos_y,
-                      black)
-    start_text2 = Text(screen, "START", main_font, main_pos_x, start_pos_y,
-                       gray)
-
-    if game_state == "start":
-        screen.fill(white)
-        if collision(main_pos_x, main_pos_y, 700, 64, mouse_x, mouse_y):
-            main_text2.display_text()
-        else:
-            main_text.display_text()
-
-        if collision(main_pos_x, start_pos_y, 180, 64, mouse_x, mouse_y):
-            start_text2.display_text()
-        else:
-            start_text.display_text()
-
-        if collision(res_x // 2, res_y // 1.5, 180, 64, mouse_x, mouse_y)\
-                and mouse_click:
-            game_state = "play"
-
-        draw_player(mouse_x, mouse_y)
+    # Set up text
+    main_text = Text(screen, "Aim Training Program", main_font, 640, 200,
+                     white, black, red)
+    start_text = Text(screen, "START", main_font, 640, 500,
+                      black, gray)
+    # Draw to screen
+    main_text.display_text()
+    start_text.display_text()
+    draw_player(mouse_x, mouse_y)
+    if start_text.mouse_over() and mouse_click:
+        game_state = "play"
 
 
 def play_screen():
+
     global game_state
     global score
     global timer
@@ -75,20 +39,59 @@ def play_screen():
     time_text = Text(screen, f"Remaining Time: {str(timer)}", score_font,
                      1100, 30, black)
 
-    if game_state == "play":
-        # What gets drawn on the screen (order matters)
+    # Draw to the screen
+    screen.fill(white)
+    score_text.display_text()
+    miss_text.display_text()
+    time_text.display_text()
+    t1.draw_target(mouse_click, 2)
+    t2.draw_target(mouse_click, 2)
+    draw_player(mouse_x, mouse_y)
 
-        screen.fill(white)
-        score_text.display_text()
-        miss_text.display_text()
-        time_text.display_text()
-        t1.draw_target(mouse_click, 2)
-        t2.draw_target(mouse_click, 2)
-        draw_player(mouse_x, mouse_y)
+    if timer == -1:
+        timer = reset_time
+        game_state = "score"
 
-        if timer == -1:
-            timer = reset_time
-            game_state = "start"
+
+def score_screen():
+
+    global game_state
+
+    # Calculates the accuracy
+    if score == 0:
+        accuracy = 0.0
+    elif misses == 0:
+        accuracy = 100.0
+    else:
+        accuracy = (misses / score) * (100 // 1)
+
+    # Set up for text
+    times_up_text = Text(screen, "TIMES UP!", main_font, 640, 100, black, red)
+    score_text = Text(screen, f"Targets hit: {score}!", score_font,
+                      640, 250, black)
+    miss_text = Text(screen, f"Targets missed: {misses}!", score_font,
+                     613, 300, black)
+    accuracy_text = Text(screen,
+                         f"Overall Accuracy: {100 - round(accuracy, 2)}%",
+                         score_font, 613, 350, black)
+    restart_text = Text(screen, "Restart", score_font, 440, 500, black, gray)
+    return_text = Text(screen, "Return", score_font, 840, 500, black, gray)
+
+    # Draw to the screen
+    screen.fill(white)
+
+    times_up_text.display_text()
+    score_text.display_text()
+    miss_text.display_text()
+    accuracy_text.display_text()
+    restart_text.display_text()
+    return_text.display_text()
+    draw_player(mouse_x, mouse_y)
+
+    if restart_text.mouse_over() and mouse_click:
+        game_state = "play"
+    if return_text.mouse_over() and mouse_click:
+        game_state = "start"
 
 
 if __name__ == '__main__':
@@ -131,7 +134,7 @@ if __name__ == '__main__':
     pygame.mouse.set_visible(False)
 
     # Game State and Levels
-    game_state = "start"
+    game_state = "score"
     level = 1
 
     # Create targets
@@ -165,11 +168,14 @@ if __name__ == '__main__':
 
         if game_state == "start":
             start_screen()
+            pygame.display.update()
         if game_state == "play":
             play_screen()
+            pygame.display.update()
+        if game_state == "score":
+            score_screen()
+            pygame.display.update()
 
-        pygame.display.update()
-
-        Clock.tick(60)
+        Clock.tick(120)
 
     pygame.quit()
