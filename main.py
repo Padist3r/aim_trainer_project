@@ -18,6 +18,7 @@ def start_screen():
     start_text = Text(screen, "START", main_font, 640, 500,
                       black, gray)
     # Draw to screen
+    screen.fill(white)
     main_text.display_text()
     start_text.display_text()
     draw_player(mouse_x, mouse_y)
@@ -134,7 +135,7 @@ if __name__ == '__main__':
     pygame.mouse.set_visible(False)
 
     # Game State and Levels
-    game_state = "score"
+    game_state = "start"
     level = 1
 
     # Create targets
@@ -168,13 +169,12 @@ if __name__ == '__main__':
 
         if game_state == "start":
             start_screen()
-            pygame.display.update()
         if game_state == "play":
             play_screen()
-            pygame.display.update()
         if game_state == "score":
             score_screen()
-            pygame.display.update()
+
+        pygame.display.update()
 
         Clock.tick(120)
 
