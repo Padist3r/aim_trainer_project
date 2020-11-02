@@ -1,7 +1,6 @@
 import pygame
 import random
 import math
-import time
 
 
 class Target:
@@ -11,6 +10,7 @@ class Target:
 
     @staticmethod
     def get_xy():
+        """Generates a random x, y position as a tuple"""
         xy = (random.randint(64, 1220), random.randint(64, 660))
         return xy
 
@@ -24,6 +24,14 @@ class Target:
         self.miss_counter = 0
 
     def draw_target(self, mouse_click, no_targets):
+        """
+        Draws the target object to the screen and moves it if its been clicked.
+        :param mouse_click: True is the mouse has been clicked,
+         False otherwise.
+        :param no_targets:
+        :return: The number of targets display to the screen. Determines how
+        the miss counter is calculated.
+        """
         self.mouse_click = mouse_click
         image = self.image
         if self.xy == (0, 0):
@@ -38,6 +46,7 @@ class Target:
                 self.miss_counter += 1 / no_targets
 
     def is_collide(self):
+        """Checks to see if a target has been clicked by the mouse."""
         mx, my = pygame.mouse.get_pos()
         distance = \
             math.sqrt(((self.xy[0] - mx) ** 2) + ((self.xy[1] - my) ** 2))
@@ -45,6 +54,11 @@ class Target:
             return True
         else:
             return False
+
+    def reset(self):
+        """Resets the score of the hit and miss counters."""
+        self.hit_counter = 0
+        self.miss_counter = 0
 
 
 class Text:
@@ -65,6 +79,11 @@ class Text:
         self.bg_colour = bg_colour
 
     def display_text(self):
+        """
+        Displays text to the screen and checks if the mouse is hovering over
+        it, if it is, it can change the colour of the text to give a more
+        responsive feeling interface.
+        """
         if self.colour_change is None:
             text = self.font.render(self.text, True, self.colour,
                                     self.bg_colour)
@@ -86,6 +105,7 @@ class Text:
                 self.screen.blit(text, text_rect)
 
     def mouse_over(self):
+        """Checks if the mouse is hovering over a text object."""
         mx, my = pygame.mouse.get_pos()
         distance = \
             math.sqrt(((self.x - mx) ** 2) + ((self.y - my) ** 2))

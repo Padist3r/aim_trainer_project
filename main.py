@@ -1,5 +1,4 @@
 import pygame
-import time
 from classes import Target, Text
 
 
@@ -10,6 +9,7 @@ def draw_player(x, y):
 
 
 def start_screen():
+    """Displays the start screen"""
 
     global game_state
     # Set up text
@@ -27,6 +27,7 @@ def start_screen():
 
 
 def play_screen():
+    """Displays the play screen"""
 
     global game_state
     global score
@@ -55,8 +56,11 @@ def play_screen():
 
 
 def score_screen():
+    """Displays the score screen."""
 
     global game_state
+    global score
+    global misses
 
     # Calculates the accuracy
     if score == 0:
@@ -90,8 +94,13 @@ def score_screen():
     draw_player(mouse_x, mouse_y)
 
     if restart_text.mouse_over() and mouse_click:
+        t1.reset()
+        t2.reset()
         game_state = "play"
+
     if return_text.mouse_over() and mouse_click:
+        t1.reset()
+        t2.reset()
         game_state = "start"
 
 
@@ -165,7 +174,6 @@ if __name__ == '__main__':
                 mouse_click = False
             if event.type == CLOCK_TICK and game_state == "play":
                 timer -= 1
-                print(timer)
 
         if game_state == "start":
             start_screen()
