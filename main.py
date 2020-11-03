@@ -47,7 +47,9 @@ def play_screen():
     miss_text.display_text()
     time_text.display_text()
     t1.draw_target(mouse_click, 2)
+    t1.move_target()
     t2.draw_target(mouse_click, 2)
+    t2.move_target()
     draw_player(mouse_x, mouse_y)
 
     if timer == -1:
@@ -68,7 +70,7 @@ def score_screen():
     elif misses == 0:
         accuracy = 100.0
     else:
-        accuracy = (misses / score) * (100 // 1)
+        accuracy = 100 - ((misses / score) * (100 // 1))
 
     # Set up for text
     times_up_text = Text(screen, "TIMES UP!", main_font, 640, 100, black, red)
@@ -77,7 +79,7 @@ def score_screen():
     miss_text = Text(screen, f"Targets missed: {misses}!", score_font,
                      613, 300, black)
     accuracy_text = Text(screen,
-                         f"Overall Accuracy: {100 - round(accuracy, 2)}%",
+                         f"Overall Accuracy: {round(accuracy, 2)}%",
                          score_font, 613, 350, black)
     restart_text = Text(screen, "Restart", score_font, 440, 500, black, gray)
     return_text = Text(screen, "Return", score_font, 840, 500, black, gray)
@@ -129,7 +131,7 @@ if __name__ == '__main__':
     Clock = pygame.time.Clock()
     CLOCK_TICK = pygame.USEREVENT + 1
     pygame.time.set_timer(CLOCK_TICK, 1000)
-    reset_time = 11
+    reset_time = 20
     timer = reset_time
 
     # Title and Icon

@@ -11,14 +11,21 @@ class Target:
     @staticmethod
     def get_xy():
         """Generates a random x, y position as a tuple"""
-        xy = (random.randint(64, 1220), random.randint(64, 660))
+        xy = [random.randint(64, 1220), random.randint(64, 660)]
+        return xy
+
+    @staticmethod
+    def get_rand_vector():
+        xy = [random.randint(-1, 1), random.randint(-1, 1)]
+        print(xy)
         return xy
 
     def __init__(self, name, window, image_dir):
         self.name = name
         self.window = window
         self.image = pygame.image.load(image_dir)
-        self.xy = (0, 0)
+        self.xy = [0, 0]
+        self.move_vector = [10, 10]
         self.mouse_click = False
         self.hit_counter = 0
         self.miss_counter = 0
@@ -34,16 +41,32 @@ class Target:
         """
         self.mouse_click = mouse_click
         image = self.image
-        if self.xy == (0, 0):
+        if self.xy == [0, 0]:
             self.xy = Target.get_xy()
         else:
             self.window.blit(image, (self.xy[0] - 64, self.xy[1] - 64))
             if Target.is_collide(self) and self.mouse_click:
                 self.xy = Target.get_xy()
+                self.move_vector = self.get_rand_vector()
                 self.hit_counter += 1
                 self.miss_counter -= 1
             if not Target.is_collide(self) and self.mouse_click:
                 self.miss_counter += 1 / no_targets
+
+    def move_target(self):
+        if self.move_vector == [10, 10]:
+            self.move_vector = self.get_rand_vector()
+
+        self.xy[0] += self.move_vector[0]
+        self.xy[1] += self.move_vector[1]
+        if self.xy[0] == 1220:
+            self.move_vector[0] = -1
+        if self.xy[0] == 64:
+            self.move_vector[0] = 1
+        if self.xy[1] == 64:
+            self.move_vector[1] = 1
+        if self.xy[1] == 660:
+            self.move_vector[1] = -1
 
     def is_collide(self):
         """Checks to see if a target has been clicked by the mouse."""
