@@ -17,13 +17,28 @@ def start_screen():
                      white, black, red)
     start_text = Text(screen, "START", main_font, 640, 500,
                       black, gray)
+    options_text = Text(screen, "OPTIONS", score_font, 640, 650, black, gray)
     # Draw to screen
+
     screen.fill(white)
+    t1.draw_target()
+    t1.move_target()
+    t2.draw_target()
+    t2.move_target()
+    t3.draw_target()
+    t3.move_target()
+    t4.draw_target()
+    t4.move_target()
     main_text.display_text()
     start_text.display_text()
+    options_text.display_text()
     draw_player(mouse_x, mouse_y)
     if start_text.mouse_over() and mouse_click:
         game_state = "play"
+        # resetting target positions from the start screen
+        t1.xy, t2.xy, t3.xy, t4.xy = [0, 0], [0, 0], [0, 0], [0, 0]
+    if options_text.mouse_over() and mouse_click:
+        game_state = "options"
 
 
 def play_screen():
@@ -106,6 +121,10 @@ def score_screen():
         game_state = "start"
 
 
+def options_screen():
+    pass
+
+
 if __name__ == '__main__':
 
     # Initialize
@@ -152,6 +171,8 @@ if __name__ == '__main__':
     # Create targets
     t1 = Target("t1", screen, "Images\\bullseye.png")
     t2 = Target("t2", screen, "Images\\bullseye.png")
+    t3 = Target("t3", screen, "Images\\bullseye.png")
+    t4 = Target("t4", screen, "Images\\bullseye.png")
 
     # Game loop
     running = True
@@ -183,6 +204,8 @@ if __name__ == '__main__':
             play_screen()
         if game_state == "score":
             score_screen()
+        if game_state == "options":
+            options_screen()
 
         pygame.display.update()
 

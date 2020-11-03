@@ -30,7 +30,7 @@ class Target:
         self.hit_counter = 0
         self.miss_counter = 0
 
-    def draw_target(self, mouse_click, no_targets):
+    def draw_target(self, mouse_click=None, no_targets=0):
         """
         Draws the target object to the screen and moves it if its been clicked.
         :param mouse_click: True is the mouse has been clicked,
@@ -129,6 +129,8 @@ class Text:
 
     def mouse_over(self):
         """Checks if the mouse is hovering over a text object."""
+        # todo: specify to only be true when mouse is over text, rather than
+        #  within circle of radius 65 around the text.
         mx, my = pygame.mouse.get_pos()
         distance = \
             math.sqrt(((self.x - mx) ** 2) + ((self.y - my) ** 2))
