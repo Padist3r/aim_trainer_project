@@ -13,11 +13,12 @@ def start_screen():
 
     global game_state
     # Set up text
-    main_text = Text(screen, "Aim Training Program", main_font, 640, 200,
-                     white, black, red)
-    start_text = Text(screen, "START", main_font, 640, 500,
+    main_text = Text(screen, "Aim Training Program", main_font, center_x, y_top
+                     , white, black, red)
+    start_text = Text(screen, "START", main_font, center_x, y_bottom,
                       black, gray)
-    options_text = Text(screen, "OPTIONS", score_font, 640, 650, black, gray)
+    options_text = Text(screen, "OPTIONS", score_font, center_x, y_very_bottom
+                        , black, gray)
     # Draw to screen
 
     screen.fill(white)
@@ -54,7 +55,7 @@ def play_screen():
                      91, 60, black)
     # Time remaining text
     time_text = Text(screen, f"Remaining Time: {str(timer)}", score_font,
-                     1100, 30, black)
+                     res_x - 200, 30, black)
 
     # Draw to the screen
     screen.fill(white)
@@ -122,7 +123,23 @@ def score_screen():
 
 
 def options_screen():
-    pass
+    global res_x
+    global res_y
+    global screen
+    global game_state
+
+    screen_res_text = Text(screen, f"Screen Resolution: {res_x} x {res_y}",
+                           score_font, center_x, 100, black, gray)
+    return_text = Text(screen, "Return", score_font, center_x, y_bottom,
+                       black, gray)
+
+    screen.fill(white)
+    screen_res_text.display_text()
+    return_text.display_text()
+    draw_player(mouse_x, mouse_y)
+
+    if return_text.mouse_over() and mouse_click:
+        game_state = "start"
 
 
 if __name__ == '__main__':
@@ -145,6 +162,13 @@ if __name__ == '__main__':
     res_x = 1280
     res_y = 720
     screen = pygame.display.set_mode((res_x, res_y))
+
+    # Screen Positions
+    center_x = res_x // 2
+    center_y = res_y // 2
+    y_top = res_y // 4
+    y_bottom = res_y // 1.5
+    y_very_bottom = res_y // 1.1
 
     # Clock and Time
     Clock = pygame.time.Clock()
